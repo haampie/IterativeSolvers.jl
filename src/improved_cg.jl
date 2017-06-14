@@ -35,9 +35,8 @@ function improved_cg(A, b; log = true, maxiter = 1500, tol = sqrt(eps(real(eltyp
         # c = A * u
         A_mul_B!(c, A, u)
 
-        σ = dot(c, u)
-        α = ρ / σ
-
+        α = ρ / dot(c, u)
+    
         axpy!(α, u, x)
         axpy!(-α, c, r)
 

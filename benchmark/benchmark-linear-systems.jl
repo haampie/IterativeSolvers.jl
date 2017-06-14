@@ -6,7 +6,7 @@ using IterativeSolvers
 function indefinite(n)
     # Generate an indefinite "hard" matrix
     srand(1)
-    A = 4 * speye(n) + sprand(n, n, 60.0 / n)
+    A = 3 * speye(n) + sprand(n, n, 12.0 / n)
     A = (A + A') / 2
     x = ones(n)
     b = A * x
@@ -16,8 +16,8 @@ end
 
 function posdef(n)
     A, b = indefinite(n)
+
     # Shift the spectrum a bit to make A positive definite
-    A += 2.35 * speye(n)
 
     return A, b
 end
@@ -35,11 +35,16 @@ function gmres(; n = 10000, tol = 1e-5, restart::Int = 15, maxiter::Int = 1500)
     impr, old
 end
 
-function cg(; n = 10000, tol = 1e-10, maxiter::Int = 1500)
+function cg(; n = 100000, tol = 1e-10, maxiter::Int = 1500)
     A, b = posdef(n)
 
     println("Matrix of size ", n, " with ~", nnz(A) / n, " nonzeros per row")
     println("Tolerance = ", tol, "; max #iterations = ", maxiter)
+    
+    x1, his1 = IterativeSolvers.improved_cg(A, b, maxiter = 3, tol = tol, log = false)
+    x2, his2 = IterativeSolvers.cg(A, b, maxiter = 3, tol = tol, log = false)
+
+    @show norm(x1 - x2)
 
     impr = @benchmark IterativeSolvers.improved_cg($A, $b, maxiter = $maxiter, tol = $tol, log = false)
     old = @benchmark IterativeSolvers.cg($A, $b, maxiter = $maxiter, tol = $tol, log = false)
