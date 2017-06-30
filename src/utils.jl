@@ -1,5 +1,5 @@
 struct UnsafeView{T, N} <: DenseArray{T, N}
-    dim::Tuple
+    dim::NTuple{N, Int}
     ptr::Ptr{T}
 end
 
