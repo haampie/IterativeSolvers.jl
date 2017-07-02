@@ -48,9 +48,7 @@ end
 
 function orthogonalize_and_normalize!(V::StridedVector{Vector{T}}, w::StridedVector{T}, h::StridedVector{T}, ::Type{ModifiedGramSchmidt}) where {T}
     # Orthogonalize using BLAS-1 ops
-    k = length(V)
-
-    for i = 1 : k
+    for i = 1 : length(V)
         h[i] = dot(w, V[i])
         @blas! w -= h[i] * V[i]
     end
@@ -64,11 +62,10 @@ end
 
 function orthogonalize_and_normalize!(V::StridedMatrix{T}, w::StridedVector{T}, h::StridedVector{T}, ::Type{ModifiedGramSchmidt}) where {T}
     # Orthogonalize using BLAS-1 ops and column views.
-    k = size(V, 2)
-
-    for i = 1 : k
-        h[i] = dot(w, unsafe_view(V, :, i))
-        @blas! w -= h[i] * unsafe_view(V, :, i)
+    for i = 1 : size(V, 2)
+        column = view(V, :, i)
+        h[i] = dot(w, column)
+        @blas! w -= h[i] * column
     end
 
     nrm = norm(w)

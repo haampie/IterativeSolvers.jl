@@ -10,7 +10,6 @@ using SugarBLAS
 using Compat
 
 include("common.jl")
-include("utils.jl")
 include("orthogonalize.jl")
 include("krylov.jl")
 include("history.jl")
