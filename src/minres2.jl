@@ -15,11 +15,13 @@ function minres2(A, b; maxiter = 10)
     H = zeros(maxiter + 1, maxiter)
     T = zeros(maxiter + 1, maxiter)
 
-    v_prevprev = zeros(n)
-    v_prev = zeros(n)
-    v_curr = copy(b)
-    v_next = zeros(n)
     x = zeros(b)
+    v_prev = similar(b)
+    v_curr = copy(b)
+    v_next = similar(b)
+    w_prev = similar(b)
+    w_curr = similar(b)
+    w_next = similar(b)
 
     # Create the right-hand side
     rhs = zeros(maxiter + 1)
@@ -72,29 +74,28 @@ function minres2(A, b; maxiter = 10)
         T[i + 1, i] = 0.0
 
         # Applied to the rhs:
-        tmp = -s * rhs[i] + c * rhs[i + 1]
-        rhs[i] = c * rhs[i] + s * rhs[i + 1]
-        rhs[i + 1] = tmp
+        rhs[i + 1] = -s * rhs[i]
+        rhs[i] = c * rhs[i]
 
-        # Update the solution
-        axpy!(rhs[i] / T[i, i], v_curr, x)
-
+        # Update W = V * inv(R)
+        copy!(w_next, v_curr)
+        
         if i > 1
-            the_factor = -rhs[i] * T[i - 1, i] / (T[i - 1, i - 1] * T[i, i])
-            axpy!(the_factor, v_prev, x)
+            axpy!(-T[i - 1, i], w_curr, w_next)
         end
 
         if i > 2
-            # y4 := y4 + b6 * [T45 * T56 / (T44 * T55 * T66) - T46 / (T44 * T66)]
-            common = rhs[i] / (T[i - 2, i - 2] * T[i, i])
-            the_factor = common * ((T[i - 2, i - 1] * T[i - 1, i]) / T[i - 1, i - 1] - T[i - 2, i])
-            axpy!(the_factor, v_prevprev, x)
+            axpy!(-T[i - 2, i], w_prev, w_next)
         end
+        
+        scale!(w_next, inv(T[i, i]))
 
-        # Move on: next -> curr, curr -> prev, prev -> prevprev
-        v_prevprev, v_prev, v_curr, v_next = v_prev, v_curr, v_next, v_prevprev
+        # Update solution x
+        axpy!(rhs[i], w_next, x)
 
-        # Same for the rotations
+        # Move on: next -> curr, curr -> prev
+        v_prev, v_curr, v_next = v_curr, v_next, v_prev
+        w_prev, w_curr, w_next = w_curr, w_next, w_prev
         c_prev, s_prev, c_curr, s_curr = c_curr, s_curr, c, s
 
         println("iter = ", i, " res = ", norm(b - A * x), " approx = ", abs(rhs[i + 1]))
