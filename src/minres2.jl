@@ -42,7 +42,7 @@ function minres2(A, b; maxiter = 10)
         
         # Orthogonalize w.r.t. v_curr
         T[i, i] = dot(v_curr, v_next)
-        v_next -= T[i, i] * v_curr
+        axpy!(-T[i, i], v_curr, v_next)
 
         # Normalize
         T[i + 1, i] = prev_norm = norm(v_next)
@@ -77,15 +77,16 @@ function minres2(A, b; maxiter = 10)
         rhs[i + 1] = tmp
 
         # Update the solution
-        axpy!(b[i] / T[i, i], v_curr, x)
+        axpy!(rhs[i] / T[i, i], v_curr, x)
 
         if i > 1
-            the_factor = -b[i] * T[i - 1, i] / (T[i - 1, i - 1] * T[i, i])
+            the_factor = -rhs[i] * T[i - 1, i] / (T[i - 1, i - 1] * T[i, i])
             axpy!(the_factor, v_prev, x)
         end
 
         if i > 2
-            common = b[i] / (T[i - 2, i - 2] * T[i, i])
+            # y4 := y4 + b6 * [T45 * T56 / (T44 * T55 * T66) - T46 / (T44 * T66)]
+            common = rhs[i] / (T[i - 2, i - 2] * T[i, i])
             the_factor = common * ((T[i - 2, i - 1] * T[i - 1, i]) / T[i - 1, i - 1] - T[i - 2, i])
             axpy!(the_factor, v_prevprev, x)
         end
