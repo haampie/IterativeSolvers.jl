@@ -1,32 +1,32 @@
-export symmlq_iterable
+export minres_iterable, minres
 
 import Base.LinAlg.BLAS.axpy!
 import Base: start, next, done
 
-type MinResIterable
-    A
+type MinResIterable{matT, vecT, numT, realT}
+    A::matT
     
     # Vectors
-    b
-    x
-    v_next
-    v_curr
-    v_prev
+    b::vecT
+    x::vecT
+    v_next::vecT
+    v_curr::vecT
+    v_prev::vecT
     
-    w₀
-    w₁
-    w₂
+    w₀::vecT
+    w₁::vecT
+    w₂::vecT
 
-    β₁
-    β₂
+    β₁::numT
+    β₂::numT
 
     # Given's rotations
-    cos
-    sin
+    cos::numT
+    sin::numT
 
-    ρ
-    reltol
-    maxiter
+    ρ::numT
+    reltol::realT
+    maxiter::Int
 end
 
 converged(s::MinResIterable) = abs(s.ρ) ≤ s.reltol
@@ -36,19 +36,23 @@ done(s::MinResIterable, iteration::Int) = iteration > s.maxiter || converged(s)
 start(::MinResIterable) = 0
 
 function next(s::MinResIterable, iteration::Int)
-    # v_next = A * v_next
+    # Lanczos recurrence: Avₖ = Tₖ₋₁,ₖ * vₖ₋₁ + Tₖ,ₖ * vₖ + Tₖ₊₁,ₖ * vₖ₊₁
+    # where Tₖ₋₁,ₖ = Tₖ,ₖ₋₁ = normalization constant of vₖ₋₁
+    # and Tₖ,ₖ = dot(vₖ, Avₖ) and Tₖ₊₁,ₖ = norm(Avₖ - Tₖ₋₁,ₖ * vₖ₋₁ - Tₖ,ₖ * vₖ)
+    
     A_mul_B!(s.v_next, s.A, s.v_curr)
     axpy!(-s.β₁, s.v_prev, s.v_next)
 
-    # Orthogonalize (once)
-    # v_next := (I - v_curr v_curr')v_next
+    # Orthogonalize
     α = dot(s.v_curr, s.v_next)
     axpy!(-α, s.v_curr, s.v_next)
     s.β₁ = norm(s.v_next)
 
     # Move the vecs around.
-    copy!(s.v_prev, s.v_curr)
-    copy!(s.v_curr, s.v_next)
+    # copy!(s.v_prev, s.v_curr)
+    # copy!(s.v_curr, s.v_next)
+    s.v_prev, s.v_curr = s.v_curr, s.v_prev
+    s.v_curr, s.v_next = s.v_next, s.v_curr
 
     # Normalize
     scale!(s.v_curr, inv(s.β₁))
@@ -58,6 +62,7 @@ function next(s::MinResIterable, iteration::Int)
     l2 = s.sin * s.β₁
     α̃ = -s.sin * s.β₂ - s.cos * α
     s.β₂ = s.cos * s.β₁
+    
     l0 = √(α̃ ^ 2 + s.β₁ ^ 2)
     s.cos = α̃ / l0
     s.sin = s.β₁ / l0
@@ -106,4 +111,10 @@ function minres_iterable(A, b; maxiter = min(20, size(A, 1)), tol = sqrt(eps(rea
         givens_c, givens_s,
         resnorm, reltol, maxiter
     )
+end
+
+function minres(A, b; kwargs...)
+    iterable = minres_iterable(A, b; kwargs...)
+    for res = iterable end
+    iterable.x, abs(iterable.ρ)
 end
