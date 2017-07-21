@@ -78,21 +78,11 @@ function bicgstabl()
 end
 
 function minres(n = 100_000)
-    A = SymTridiagonal(fill(1.8, n), fill(-1.0, n))
+    A = SymTridiagonal(fill(2.1, n), fill(-1.0, n))
     x = ones(n)
     b = A * x
 
     @benchmark IterativeSolvers.minres($A, $b, maxiter = 100)
-end
-
-function minres_allocs(n = 100_000)
-    A = SymTridiagonal(fill(1.8, n), fill(-1.0, n))
-    x = ones(n)
-    b = A * x
-
-    IterativeSolvers.minres(A, b, maxiter = 500)
-    Profile.clear_malloc_data()
-    @profile IterativeSolvers.minres(A, b, maxiter = 500)
 end
 
 end
