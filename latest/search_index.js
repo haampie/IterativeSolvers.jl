@@ -541,7 +541,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Stationary methods",
     "title": "Stationary methods",
     "category": "section",
-    "text": "Stationary methods are typically used as smoothers in multigrid methods, where only very few iterations are applied to get rid of high-frequency components in the error. The implementations of stationary methods have this goal in mind, which means there is no other stopping criterion besides the maximum number of iterations.note: CSC versus CSR\nJulia stores matrices column-major. In order to avoid cache misses, the implementations of our stationary methods traverse the matrices column-major. This deviates from classical textbook implementations. Also the (S)SOR methods cannot be computed fully in-place, but require a temporary vector.When it comes to SparseMatrixCSC, we precompute an integer array of the indices of the diagonal as well to avoid expensive searches in each iteration."
+    "text": "Stationary methods are typically used as smoothers in multigrid methods, where only very few iterations are applied to get rid of high-frequency components in the error. The implementations of stationary methods have this goal in mind, which means there is no other stopping criterion besides the maximum number of iterations.note: CSC versus CSR\nJulia stores matrices column-major. In order to avoid cache misses, the implementations of our stationary methods traverse the matrices column-major. This deviates from classical textbook implementations. Also the SOR and SSOR methods cannot be computed efficiently in-place, but require a temporary vector.When it comes to SparseMatrixCSC, we precompute in all stationary methods an integer array of the indices of the diagonal to avoid expensive searches in each iteration."
 },
 
 {
@@ -549,7 +549,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Stationary methods",
     "title": "IterativeSolvers.jacobi",
     "category": "Function",
-    "text": "jacobi(A, b)\n\nSolve A*x=b with the Jacobi method.\n\nch is a ConvergenceHistory object. Otherwise it will only return x. If log is set to true is given, method will output a tuple x, ch.\n\nArguments\n\nA: linear operator.\n\nKeywords\n\ntol::Real = size(A,2)^3*eps(): stopping tolerance.\n\nmaxiter::Integer = size(A,2)^2: maximum number of iterations.\n\nverbose::Bool = false: verbose flag.\n\nlog::Bool = false: output an extra element of type ConvergenceHistory containing extra information of the method execution.\n\nOutput\n\nif log is false\n\nx: approximated solution.\n\nif log is true\n\nx: approximated solution.\n\nch: convergence history.\n\nConvergenceHistory keys\n\n:tol => ::Real: stopping tolerance.\n\n:resnom => ::Vector: residual norm at each iteration.\n\n\n\n"
+    "text": "jacobi(A, b) -> x\n\nSame as jacobi!, but allocates a solution vector x initialized with zeros.\n\n\n\n"
 },
 
 {
@@ -557,7 +557,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Stationary methods",
     "title": "IterativeSolvers.jacobi!",
     "category": "Function",
-    "text": "jacobi!(x, A, b)\n\nOverwrite x.\n\nSolve A*x=b with the Jacobi method.\n\nch is a ConvergenceHistory object. Otherwise it will only return x. If log is set to true is given, method will output a tuple x, ch.\n\nArguments\n\nx: initial guess, overwrite final estimation.\n\nA: linear operator.\n\nKeywords\n\ntol::Real = size(A,2)^3*eps(): stopping tolerance.\n\nmaxiter::Integer = size(A,2)^2: maximum number of iterations.\n\nverbose::Bool = false: verbose flag.\n\nlog::Bool = false: output an extra element of type ConvergenceHistory containing extra information of the method execution.\n\nOutput\n\nif log is false\n\nx: approximated solution.\n\nif log is true\n\nx: approximated solution.\n\nch: convergence history.\n\nConvergenceHistory keys\n\n:tol => ::Real: stopping tolerance.\n\n:resnom => ::Vector: residual norm at each iteration.\n\n\n\n"
+    "text": "jacobi!(x, A::AbstractMatrix, b; maxiter=10) -> x\n\nPerforms exactly maxiter Jacobi iterations.\n\nAllocates a single temporary vector and traverses A columnwise.\n\nThrows Base.LinAlg.SingularException when the diagonal has a zero. This check is performed once beforehand.\n\n\n\njacobi!(x, A::SparseMatrixCSC, b; maxiter=10) -> x\n\nPerforms exactly maxiter Jacobi iterations.\n\nAllocates a temporary vector and precomputes the diagonal indices.\n\nThrows Base.LinAlg.SingularException when the diagonal has a zero. This check is performed once beforehand.\n\n\n\n"
 },
 
 {
@@ -573,7 +573,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Stationary methods",
     "title": "IterativeSolvers.gauss_seidel",
     "category": "Function",
-    "text": "gauss_seidel(A, b)\n\nSolve A*x=b with the Gauss-Seidel method.\n\nch is a ConvergenceHistory object. Otherwise it will only return x. If log is set to true is given, method will output a tuple x, ch.\n\nArguments\n\nA: linear operator.\n\nKeywords\n\ntol::Real = size(A,2)^3*eps(): stopping tolerance.\n\nmaxiter::Integer = size(A,2)^2: maximum number of iterations.\n\nverbose::Bool = false: verbose flag.\n\nlog::Bool = false: output an extra element of type ConvergenceHistory containing extra information of the method execution.\n\nOutput\n\nif log is false\n\nx: approximated solution.\n\nif log is true\n\nx: approximated solution.\n\nch: convergence history.\n\nConvergenceHistory keys\n\n:tol => ::Real: stopping tolerance.\n\n:resnom => ::Vector: residual norm at each iteration.\n\n\n\n"
+    "text": "gauss_seidel(A, b) -> x\n\nSame as gauss_seidel!, but allocates a solution vector x initialized with zeros.\n\n\n\n"
 },
 
 {
@@ -581,7 +581,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Stationary methods",
     "title": "IterativeSolvers.gauss_seidel!",
     "category": "Function",
-    "text": "gauss_seidel!(x, A, b)\n\nOverwrite x.\n\nSolve A*x=b with the Gauss-Seidel method.\n\nch is a ConvergenceHistory object. Otherwise it will only return x. If log is set to true is given, method will output a tuple x, ch.\n\nArguments\n\nx: initial guess, overwrite final estimation.\n\nA: linear operator.\n\nKeywords\n\ntol::Real = size(A,2)^3*eps(): stopping tolerance.\n\nmaxiter::Integer = size(A,2)^2: maximum number of iterations.\n\nverbose::Bool = false: verbose flag.\n\nlog::Bool = false: output an extra element of type ConvergenceHistory containing extra information of the method execution.\n\nOutput\n\nif log is false\n\nx: approximated solution.\n\nif log is true\n\nx: approximated solution.\n\nch: convergence history.\n\nConvergenceHistory keys\n\n:tol => ::Real: stopping tolerance.\n\n:resnom => ::Vector: residual norm at each iteration.\n\n\n\n"
+    "text": "gauss_seidel!(x, A::AbstractMatrix, b; maxiter=10) -> x\n\nPerforms exactly maxiter Gauss-Seidel iterations.\n\nWorks fully in-place and traverses A columnwise.\n\nThrows Base.LinAlg.SingularException when the diagonal has a zero. This check is performed once beforehand.\n\n\n\ngauss_seidel!(x, A::SparseMatrixCSC, b; maxiter=10) -> x\n\nPerforms exactly maxiter Gauss-Seidel iterations.\n\nWorks fully in-place, but precomputes the diagonal indices.\n\nThrows Base.LinAlg.SingularException when the diagonal has a zero. This check is performed once beforehand.\n\n\n\n"
 },
 
 {
@@ -597,7 +597,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Stationary methods",
     "title": "IterativeSolvers.sor",
     "category": "Function",
-    "text": "sor(A, b, ω)\n\nSolve A*x=b with the successive overrelaxation method.\n\nch is a ConvergenceHistory object. Otherwise it will only return x. If log is set to true is given, method will output a tuple x, ch.\n\nArguments\n\nshift::Number=0: shift to be applied to matrix A.\n\nA: linear operator.\n\nKeywords\n\ntol::Real = size(A,2)^3*eps(): stopping tolerance.\n\nmaxiter::Integer = size(A,2)^2: maximum number of iterations.\n\nverbose::Bool = false: verbose flag.\n\nlog::Bool = false: output an extra element of type ConvergenceHistory containing extra information of the method execution.\n\nOutput\n\nif log is false\n\nx: approximated solution.\n\nif log is true\n\nx: approximated solution.\n\nch: convergence history.\n\nConvergenceHistory keys\n\n:tol => ::Real: stopping tolerance.\n\n:resnom => ::Vector: residual norm at each iteration.\n\n\n\n"
+    "text": "sor(A, b, ω::Real) -> x\n\nSame as sor!, but allocates a solution vector x initialized with zeros.\n\n\n\n"
 },
 
 {
@@ -605,7 +605,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Stationary methods",
     "title": "IterativeSolvers.sor!",
     "category": "Function",
-    "text": "sor!(x, A, b, ω)\n\nOverwrite x.\n\nSolve A*x=b with the successive overrelaxation method.\n\nch is a ConvergenceHistory object. Otherwise it will only return x. If log is set to true is given, method will output a tuple x, ch.\n\nArguments\n\nx: initial guess, overwrite final estimation.\n\nshift::Number=0: shift to be applied to matrix A.\n\nA: linear operator.\n\nKeywords\n\ntol::Real = size(A,2)^3*eps(): stopping tolerance.\n\nmaxiter::Integer = size(A,2)^2: maximum number of iterations.\n\nverbose::Bool = false: verbose flag.\n\nlog::Bool = false: output an extra element of type ConvergenceHistory containing extra information of the method execution.\n\nOutput\n\nif log is false\n\nx: approximated solution.\n\nif log is true\n\nx: approximated solution.\n\nch: convergence history.\n\nConvergenceHistory keys\n\n:tol => ::Real: stopping tolerance.\n\n:resnom => ::Vector: residual norm at each iteration.\n\n\n\n"
+    "text": "sor!(x, A::AbstractMatrix, b, ω::Real; maxiter=10) -> x\n\nPerforms exactly maxiter SOR iterations with relaxation parameter ω.\n\nAllocates a single temporary vector and traverses A columnwise.\n\nThrows Base.LinAlg.SingularException when the diagonal has a zero. This check is performed once beforehand.\n\n\n\nsor!(x, A::SparseMatrixCSC, b, ω::Real; maxiter::Int = 10)\n\nPerforms exactly maxiter SOR iterations with relaxation parameter ω.\n\nAllocates a temporary vector and precomputes the diagonal indices.\n\nThrows Base.LinAlg.SingularException when the diagonal has a zero. This check is performed once beforehand.\n\n\n\n"
 },
 
 {
@@ -621,7 +621,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Stationary methods",
     "title": "IterativeSolvers.ssor",
     "category": "Function",
-    "text": "ssor(A, b, ω)\n\nSolve A*x=b with the symmetric successive overrelaxation method.\n\nch is a ConvergenceHistory object. Otherwise it will only return x. If log is set to true is given, method will output a tuple x, ch.\n\nArguments\n\nshift::Number=0: shift to be applied to matrix A.\n\nA: linear operator.\n\nKeywords\n\ntol::Real = size(A,2)^3*eps(): stopping tolerance.\n\nmaxiter::Integer = size(A,2)^2: maximum number of iterations.\n\nverbose::Bool = false: verbose flag.\n\nlog::Bool = false: output an extra element of type ConvergenceHistory containing extra information of the method execution.\n\nOutput\n\nif log is false\n\nx: approximated solution.\n\nif log is true\n\nx: approximated solution.\n\nch: convergence history.\n\nConvergenceHistory keys\n\n:tol => ::Real: stopping tolerance.\n\n:resnom => ::Vector: residual norm at each iteration.\n\n\n\n"
+    "text": "ssor(A, b, ω::Real) -> x\n\nSame as ssor!, but allocates a solution vector x initialized with zeros.\n\n\n\n"
 },
 
 {
@@ -629,7 +629,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Stationary methods",
     "title": "IterativeSolvers.ssor!",
     "category": "Function",
-    "text": "ssor!(x, A, b, ω)\n\nOverwrite x.\n\nSolve A*x=b with the symmetric successive overrelaxation method.\n\nch is a ConvergenceHistory object. Otherwise it will only return x. If log is set to true is given, method will output a tuple x, ch.\n\nArguments\n\nx: initial guess, overwrite final estimation.\n\nshift::Number=0: shift to be applied to matrix A.\n\nA: linear operator.\n\nKeywords\n\ntol::Real = size(A,2)^3*eps(): stopping tolerance.\n\nmaxiter::Integer = size(A,2)^2: maximum number of iterations.\n\nverbose::Bool = false: verbose flag.\n\nlog::Bool = false: output an extra element of type ConvergenceHistory containing extra information of the method execution.\n\nOutput\n\nif log is false\n\nx: approximated solution.\n\nif log is true\n\nx: approximated solution.\n\nch: convergence history.\n\nConvergenceHistory keys\n\n:tol => ::Real: stopping tolerance.\n\n:resnom => ::Vector: residual norm at each iteration.\n\n\n\n"
+    "text": "ssor!(x, A::AbstractMatrix, b, ω::Real; maxiter=10) -> x\n\nPerforms exactly maxiter SSOR iterations with relaxation parameter ω. Each iteration  is basically a forward and backward sweep of SOR.\n\nAllocates a single temporary vector and traverses A columnwise.\n\nThrows Base.LinAlg.SingularException when the diagonal has a zero. This check is performed once beforehand.\n\n\n\nssor!(x, A::SparseMatrixCSC, b, ω::Real; maxiter::Int = 10)\n\nPerforms exactly maxiter SSOR iterations with relaxation parameter ω. Each iteration  is basically a forward and backward sweep of SOR.\n\nAllocates a temporary vector and precomputes the diagonal indices.\n\nThrows Base.LinAlg.SingularException when the diagonal has a zero. This check is performed once beforehand.\n\n\n\n"
 },
 
 {
@@ -861,7 +861,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Contributing",
     "title": "Contributing",
     "category": "section",
-    "text": "Contributions are always welcome, as are feature requests and suggestions. Feel free to open issues and pull requests at any time.It is important to note that almost every method in the package has documentation, to know what it does simply use ?<method> in the terminal.julia> using IterativeSolvers\n\nhelp?> IterativeSolvers.Adivtype\n  Adivtype(A, b)\n\n  Determine type of the division of an element of b against an element of A:\n\n  typeof(one(eltype(b))/one(eltype(A)))"
+    "text": "Contributions are always welcome, as are feature requests and suggestions. Feel free to open an issue or pull request at any time.It is important to note that almost every method in the package has documentation, to know what it does simply use ?<method> in the terminal.julia> using IterativeSolvers\n\nhelp?> IterativeSolvers.Adivtype\n  Adivtype(A, b)\n\n  Determine type of the division of an element of b against an element of A:\n\n  typeof(one(eltype(b))/one(eltype(A)))"
 },
 
 {
