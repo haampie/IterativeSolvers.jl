@@ -189,7 +189,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Conjugate Gradients",
     "title": "Implementation details",
     "category": "section",
-    "text": "The current implementation follows a rather standard approach. Note that preconditioned CG (or PCG) is slightly different from ordinary CG, because the former must compute the residual explicitly, while it is available as byproduct in the latter. Our implementation of CG ensures the minimal number of vector operations."
+    "text": "The current implementation follows a rather standard approach. Note that preconditioned CG (or PCG) is slightly different from ordinary CG, because the former must compute the residual explicitly, while it is available as byproduct in the latter. Our implementation of CG ensures the minimal number of vector operations.tip: Tip\nCG can be used as an iterator."
 },
 
 {
@@ -237,7 +237,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Chebyshev iteration",
     "title": "Implementation details",
     "category": "section",
-    "text": "warning: BLAS1 operations\nAlthough the method is often used to avoid computation of inner products, the stopping criterion is still based on the residual norm. Hence the current implementation is not free of BLAS1 operations."
+    "text": "warning: BLAS1 operations\nAlthough the method is often used to avoid computation of inner products, the stopping criterion is still based on the residual norm. Hence the current implementation is not free of BLAS1 operations.tip: Tip\nChebyshev iteration can be used as an iterator."
 },
 
 {
@@ -285,7 +285,7 @@ var documenterSearchIndex = {"docs": [
     "page": "MINRES",
     "title": "Implementation details",
     "category": "section",
-    "text": "MINRES exploits the tridiagonal structure of the Hessenberg matrix. Although MINRES is mathematically equivalent to GMRES, it might not be equivalent in finite precision. MINRES updates the solution asx = x_0 + (V R^-1) (Q^*r_0e_1)where V is the orthonormal basis for the Krylov subspace and QR is the QR-decomposition of the Hessenberg matrix. Note that the brackets are placed slightly differently from how GMRES would update the residual.MINRES computes V and W = VR^-1 via a three-term recurrence, using only the last column of R Therefore we pre-allocate only six vectors, save only the last two entries of Q^*r_0e_1 and part of the last column of the Hessenberg matrix.note: Real and complex arithmetic\nIf A is Hermitian, then the Hessenberg matrix will be real. This is exploited in the current implementation.If A is skew-Hermitian, the diagonal of the Hessenberg matrix will be imaginary, and hence we use complex arithmetic in that case."
+    "text": "MINRES exploits the tridiagonal structure of the Hessenberg matrix. Although MINRES is mathematically equivalent to GMRES, it might not be equivalent in finite precision. MINRES updates the solution asx = x_0 + (V R^-1) (Q^*r_0e_1)where V is the orthonormal basis for the Krylov subspace and QR is the QR-decomposition of the Hessenberg matrix. Note that the brackets are placed slightly differently from how GMRES would update the residual.MINRES computes V and W = VR^-1 via a three-term recurrence, using only the last column of R Therefore we pre-allocate only six vectors, save only the last two entries of Q^*r_0e_1 and part of the last column of the Hessenberg matrix.note: Real and complex arithmetic\nIf A is Hermitian, then the Hessenberg matrix will be real. This is exploited in the current implementation.If A is skew-Hermitian, the diagonal of the Hessenberg matrix will be imaginary, and hence we use complex arithmetic in that case.tip: Tip\nMINRES can be used as an iterator."
 },
 
 {
@@ -333,7 +333,7 @@ var documenterSearchIndex = {"docs": [
     "page": "BiCGStab(l)",
     "title": "Implementation details",
     "category": "section",
-    "text": "The method is based on the original article [Sleijpen1993], but does not implement later improvements. The normal equations arising from the GMRES steps are solved without orthogonalization. Hence the method should only be reliable for relatively small values of l.The r and u factors are pre-allocated as matrices of size n times (l + 1), so that BLAS2 methods can be used. Also the random shadow residual is pre-allocated as a vector. Hence the storage costs are approximately 2l + 3 vectors.[Sleijpen1993]: Sleijpen, Gerard LG, and Diederik R. Fokkema. \"BiCGstab(l) for  linear equations involving unsymmetric matrices with complex spectrum.\"  Electronic Transactions on Numerical Analysis 1.11 (1993): 2000."
+    "text": "The method is based on the original article [Sleijpen1993], but does not implement later improvements. The normal equations arising from the GMRES steps are solved without orthogonalization. Hence the method should only be reliable for relatively small values of l.The r and u factors are pre-allocated as matrices of size n times (l + 1), so that BLAS2 methods can be used. Also the random shadow residual is pre-allocated as a vector. Hence the storage costs are approximately 2l + 3 vectors.tip: Tip\nBiCGStabl(l) can be used as an iterator.[Sleijpen1993]: Sleijpen, Gerard LG, and Diederik R. Fokkema. \"BiCGstab(l) for  linear equations involving unsymmetric matrices with complex spectrum.\"  Electronic Transactions on Numerical Analysis 1.11 (1993): 2000."
 },
 
 {
@@ -365,7 +365,7 @@ var documenterSearchIndex = {"docs": [
     "page": "IDR(s)",
     "title": "IterativeSolvers.idrs!",
     "category": "Function",
-    "text": "idrs(A, b; s = 8) -> x, [history]\n\nSolve the problem Ax = b approximate with IDR(s), where s is the dimension of the shadow space.\n\nArguments\n\nx: Initial guess, will be updated in-place;\nA: linear operator;\nb: right-hand side.\n\nKeywords\n\ns::Integer = 8: dimension of the shadow space;\ntol: relative tolerance;\nmaxiter::Int: maximum number of iterations;\nlog::Bool: keep track of the residual norm in each iteration;\nverbose::Bool: print convergence information during the iterations.\n\nReturn values\n\nif log is false\n\nx: approximate solution.\n\nif log is true\n\nx: approximate solution;\nhistory: convergence history.\n\n\n\n"
+    "text": "idrs!(x, A, b; s = 8) -> x, [history]\n\nSolve the problem Ax = b approximately with IDR(s), where s is the dimension of the shadow space.\n\nArguments\n\nx: Initial guess, will be updated in-place;\nA: linear operator;\nb: right-hand side.\n\nKeywords\n\ns::Integer = 8: dimension of the shadow space;\ntol: relative tolerance;\nmaxiter::Int: maximum number of iterations;\nlog::Bool: keep track of the residual norm in each iteration;\nverbose::Bool: print convergence information during the iterations.\n\nReturn values\n\nif log is false\n\nx: approximate solution.\n\nif log is true\n\nx: approximate solution;\nhistory: convergence history.\n\n\n\n"
 },
 
 {
@@ -429,7 +429,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Restarted GMRES",
     "title": "Implementation details",
     "category": "section",
-    "text": "The implementation pre-allocates a matrix V of size n by restart whose columns form an orthonormal basis for the Krylov subspace. This allows BLAS2 operations when updating the solution vector x. The Hessenberg matrix is also pre-allocated.Modified Gram-Schmidt is used to orthogonalize the columns of V.The computation of the residual norm is implemented in a non-standard way, namely keeping track of a vector gamma in the null-space of H_k^*, which is the adjoint of the (k + 1) times k Hessenberg matrix H_k at the kth iteration. Only when x needs to be updated is the Hessenberg matrix mutated with Givens rotations. Advanced users can therefore use the underlying GMRESIterable to access the Hessenberg matrix during the iterations."
+    "text": "The implementation pre-allocates a matrix V of size n by restart whose columns form an orthonormal basis for the Krylov subspace. This allows BLAS2 operations when updating the solution vector x. The Hessenberg matrix is also pre-allocated.Modified Gram-Schmidt is used to orthogonalize the columns of V.The computation of the residual norm is implemented in a non-standard way, namely keeping track of a vector gamma in the null-space of H_k^*, which is the adjoint of the (k + 1) times k Hessenberg matrix H_k at the kth iteration. Only when x needs to be updated is the Hessenberg matrix mutated with Givens rotations.tip: Tip\nGMRES can be used as an iterator. This makes it possible to access the Hessenberg matrix and Krylov basis vectors during the iterations."
 },
 
 {
@@ -537,7 +537,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "linear_systems/stationary.html#Stationary-methods-1",
+    "location": "linear_systems/stationary.html#Stationary-1",
     "page": "Stationary methods",
     "title": "Stationary methods",
     "category": "section",
@@ -605,7 +605,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Stationary methods",
     "title": "IterativeSolvers.sor!",
     "category": "Function",
-    "text": "sor!(x, A::AbstractMatrix, b, ω::Real; maxiter=10) -> x\n\nPerforms exactly maxiter SOR iterations with relaxation parameter ω.\n\nAllocates a single temporary vector and traverses A columnwise.\n\nThrows Base.LinAlg.SingularException when the diagonal has a zero. This check is performed once beforehand.\n\n\n\nsor!(x, A::SparseMatrixCSC, b, ω::Real; maxiter::Int = 10)\n\nPerforms exactly maxiter SOR iterations with relaxation parameter ω.\n\nAllocates a temporary vector and precomputes the diagonal indices.\n\nThrows Base.LinAlg.SingularException when the diagonal has a zero. This check is performed once beforehand.\n\n\n\n"
+    "text": "sor!(x, A::AbstractMatrix, b, ω::Real; maxiter=10) -> x\n\nPerforms exactly maxiter SOR iterations with relaxation parameter ω.\n\nAllocates a single temporary vector and traverses A columnwise.\n\nThrows Base.LinAlg.SingularException when the diagonal has a zero. This check is performed once beforehand.\n\n\n\nsor!(x, A::SparseMatrixCSC, b, ω::Real; maxiter=10)\n\nPerforms exactly maxiter SOR iterations with relaxation parameter ω.\n\nAllocates a temporary vector and precomputes the diagonal indices.\n\nThrows Base.LinAlg.SingularException when the diagonal has a zero. This check is performed once beforehand.\n\n\n\n"
 },
 
 {
@@ -629,7 +629,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Stationary methods",
     "title": "IterativeSolvers.ssor!",
     "category": "Function",
-    "text": "ssor!(x, A::AbstractMatrix, b, ω::Real; maxiter=10) -> x\n\nPerforms exactly maxiter SSOR iterations with relaxation parameter ω. Each iteration  is basically a forward and backward sweep of SOR.\n\nAllocates a single temporary vector and traverses A columnwise.\n\nThrows Base.LinAlg.SingularException when the diagonal has a zero. This check is performed once beforehand.\n\n\n\nssor!(x, A::SparseMatrixCSC, b, ω::Real; maxiter::Int = 10)\n\nPerforms exactly maxiter SSOR iterations with relaxation parameter ω. Each iteration  is basically a forward and backward sweep of SOR.\n\nAllocates a temporary vector and precomputes the diagonal indices.\n\nThrows Base.LinAlg.SingularException when the diagonal has a zero. This check is performed once beforehand.\n\n\n\n"
+    "text": "ssor!(x, A::AbstractMatrix, b, ω::Real; maxiter=10) -> x\n\nPerforms exactly maxiter SSOR iterations with relaxation parameter ω. Each iteration  is basically a forward and backward sweep of SOR.\n\nAllocates a single temporary vector and traverses A columnwise.\n\nThrows Base.LinAlg.SingularException when the diagonal has a zero. This check is performed once beforehand.\n\n\n\nssor!(x, A::SparseMatrixCSC, b, ω::Real; maxiter=10)\n\nPerforms exactly maxiter SSOR iterations with relaxation parameter ω. Each iteration  is basically a forward and backward sweep of SOR.\n\nAllocates a temporary vector and precomputes the diagonal indices.\n\nThrows Base.LinAlg.SingularException when the diagonal has a zero. This check is performed once beforehand.\n\n\n\n"
 },
 
 {
@@ -637,7 +637,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Stationary methods",
     "title": "Symmetric successive over-relaxation (SSOR)",
     "category": "section",
-    "text": "ssor\nssor!"
+    "text": "ssor\nssor!tip: Tip\nAll stationary methods can be used a iterators."
 },
 
 {
@@ -846,6 +846,46 @@ var documenterSearchIndex = {"docs": [
     "title": "Norm estimate",
     "category": "section",
     "text": "rnorm\nrnorms[Halko2011]: Halko, Nathan, Per-Gunnar Martinsson, and Joel A. Tropp. \"Finding structure with randomness: Probabilistic algorithms for constructing approximate matrix decompositions.\" SIAM review 53.2 (2011): 217-288.[Dixon1983]: Dixon, John D. \"Estimating extremal eigenvalues and condition numbers of matrices.\" SIAM Journal on Numerical Analysis 20.4 (1983): 812-814.[Liberty2007]: Liberty, Edo, et al. \"Randomized algorithms for the low-rank approximation of matrices.\" Proceedings of the National Academy of Sciences 104.51 (2007): 20167-20172."
+},
+
+{
+    "location": "iterators.html#",
+    "page": "The iterator approach",
+    "title": "The iterator approach",
+    "category": "page",
+    "text": ""
+},
+
+{
+    "location": "iterators.html#Iterators-1",
+    "page": "The iterator approach",
+    "title": "Iterative solvers as iterators",
+    "category": "section",
+    "text": "In advanced use cases you might want to access the internal data structures of the solver, inject code to be run after each iteration, have total control over allocations or reduce overhead in initialization. The iterator approach of IterativeSolvers.jl makes this possible.note: Note\nAt this point BiCGStab(l), CG, Chebyshev, GMRES, MINRES and the stationary methods are implemented as iterators. However, the package does not yet export the iterators and helper methods themselves."
+},
+
+{
+    "location": "iterators.html#How-iterators-are-implemented-1",
+    "page": "The iterator approach",
+    "title": "How iterators are implemented",
+    "category": "section",
+    "text": "The solvers listed above are basically a thin wrapper around an iterator. Among other things, they initialize the iterable, loop through the iterator and return the result:function my_solver!(x, A, b)\n    iterable = MySolverIterable(x, A, b)\n    for item = iterable end\n    return iterable.x\nendRather than calling my_solver!(x, A, b), you could also initialize the iterable yourself and perform the for loop."
+},
+
+{
+    "location": "iterators.html#Example:-avoiding-unnecessary-initialization-1",
+    "page": "The iterator approach",
+    "title": "Example: avoiding unnecessary initialization",
+    "category": "section",
+    "text": "The Jacobi method for SparseMatrixCSC has some overhead in intialization; not only do we need to allocate a temporary vector, we also have to search for indices of the diagonal (and check their values are nonzero). The current implementation initializes the iterable as:jacobi_iterable(x, A::SparseMatrixCSC, b; maxiter::Int = 10) =\n    JacobiIterable{eltype(x), typeof(x)}(OffDiagonal(A, DiagonalIndices(A)), x, similar(x), b, maxiter)Now if you apply Jacobi iteration multiple times with the same matrix for just a few iterations, it makes sense to initialize the iterable only once and reuse it afterwards:A = sprand(10_000, 10_000, 10 / 10_000) + 20I\nb1 = rand(10_000)\nb2 = rand(10_000)\nx = rand(10_000)\n\nmy_iterable = IterativeSolvers.jacobi_iterable(x, A, b1, maxiter = 4)\n\nfor item = my_iterable \n    println(\"Iteration for rhs 1\")\nend\n\n@show norm(b1 - A * x) / norm(b1)\n\n# Copy the next right-hand side into the iterable\ncopy!(my_iterable.b, b2)\n\nfor item = my_iterable\n    println(\"Iteration for rhs 2\")\nend\n\n@show norm(b2 - A * x) / norm(b2)This would output:Iteration for rhs 1\nIteration for rhs 1\nIteration for rhs 1\nIteration for rhs 1\nnorm(b1 - A * x) / norm(b1) = 0.08388528015119746\nIteration for rhs 2\nIteration for rhs 2\nIteration for rhs 2\nIteration for rhs 2\nnorm(b2 - A * x) / norm(b2) = 0.0003681972775644809"
+},
+
+{
+    "location": "iterators.html#Other-use-cases-1",
+    "page": "The iterator approach",
+    "title": "Other use cases",
+    "category": "section",
+    "text": "Other use cases include: computing the (harmonic) Ritz values from the Hessenberg matrix in GMRES;\ncomparing the approximate residual of methods such as GMRES and BiCGStab(l) with the true residual during the iterations;\nupdating a preconditioner in flexible methods."
 },
 
 {
